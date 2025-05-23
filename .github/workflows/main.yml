@@ -1,0 +1,33 @@
+name: Build Clash for iOS
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # 允许手动触发
+
+jobs:
+  build:
+    runs-on: macos-latest # 使用 macOS 环境
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install CocoaPods (if needed)
+        run: |
+          sudo gem install cocoapods
+          pod install
+
+      - name: Build .xcarchive
+        run: |
+          xcodebuild -workspace Clash.xcworkspace -scheme Clash -configuration Release -archivePath build/Clash.xcarchive archive
+
+      - name: Export .ipa
+        run: |
+          xcodebuild -exportArchive -archivePath build/Clash.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath build/ipa
+
+      - name: Upload .ipa artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Clash.ipa
+          path: build/ipa/Clash.ipa
