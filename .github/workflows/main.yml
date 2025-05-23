@@ -12,10 +12,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install CocoaPods
+      # 仅当有 Podfile 时启用
+      - name: Install CocoaPods (if Podfile exists)
         run: |
-          sudo gem install cocoapods
-          pod install
+          if [ -f "Podfile" ]; then
+            sudo gem install cocoapods
+            pod install
+          else
+            echo "No Podfile found, skipping CocoaPods."
+          fi
 
       - name: Build .xcarchive
         run: |
@@ -26,7 +31,7 @@ jobs:
           xcodebuild -exportArchive -archivePath build/Clash.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath build/ipa
 
       - name: Upload .ipa artifact
-        uses: actions/upload-artifact@v4  # 关键修改：v3 → v4
+        uses: actions/upload-artifact@v4
         with:
           name: Clash.ipa
           path: build/ipa/Clash.ipa
