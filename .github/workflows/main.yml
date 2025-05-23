@@ -24,8 +24,8 @@ jobs:
 
       - name: Build .xcarchive
         run: |
-          xcodebuild -workspace Clash.xcworkspace -scheme Clash -configuration Release -archivePath build/Clash.xcarchive archive
-
+          xcodebuild -project Clash.xcodeproj -scheme Clash -configuration Release -archivePath build/Clash.xcarchive archive
+    
       - name: Export .ipa
         run: |
           xcodebuild -exportArchive -archivePath build/Clash.xcarchive -exportOptionsPlist ExportOptions.plist -exportPath build/ipa
